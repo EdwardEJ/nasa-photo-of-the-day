@@ -1,11 +1,16 @@
 import React from 'react'
 
-export const DisplayInfo = (props) => {
-
+const DisplayInfo = (props) => {
   const { info } = props
+
   return (
     <>
-      <p>{info.title}</p>
+      <p>Image of {info.title}</p>
+      <img src={info.url} alt={info.title} />
+      <p>{info.explanation}</p>
+      <p>&#169; Copyright {info.copyright}</p>
     </>
   )
 }
+
+export default DisplayInfo
