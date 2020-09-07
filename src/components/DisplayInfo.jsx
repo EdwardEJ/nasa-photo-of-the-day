@@ -4,7 +4,7 @@ const DisplayInfo = ({ info }) => {
 
   return (
     <section>
-      <h2>Image of {info.title}</h2>
+      {(info.title) ? <h2>Image of {info.title}</h2> : 'Select a date!'}
       {(info.media_type === 'image') ?
         <img src={info.url} alt={info.title} /> : null
       }
