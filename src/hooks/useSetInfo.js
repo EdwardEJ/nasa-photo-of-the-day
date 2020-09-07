@@ -10,8 +10,6 @@ export const useSetInfo = (date) => {
   useEffect(() => {
     Axios.get(url)
       .then(res => {
-        debugger
-
         setInfo(res.data)
       })
       .catch(err => {
