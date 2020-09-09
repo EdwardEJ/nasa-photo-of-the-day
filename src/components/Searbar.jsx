@@ -22,9 +22,9 @@ const useStyles = makeStyles({
     '& Button': {
       fontSize: '2rem'
     },
-    '@media (max-width:400px)': {
+    '@media (max-width:450px)': {
       '& h1': {
-        fontSize: '3.5rem',
+        fontSize: '3.2rem',
       },
       '& Button': {
         fontSize: '1.5rem'

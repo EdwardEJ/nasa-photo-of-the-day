@@ -1,10 +1,43 @@
 import React from 'react'
+import { makeStyles } from '@material-ui/core/styles';
+import { Typography } from '@material-ui/core';
+
+const useStyles = makeStyles({
+  root: {
+    padding: '3%',
+    textAlign: 'center',
+    height: '100%',
+    '& h2': {
+      textAlign: 'center',
+    },
+    '& img': {
+      padding: '3%',
+    },
+    '& iframe': {
+      width: '960px',
+      height: '540px',
+    },
+    '& p': {
+      fontSize: '2rem',
+      lineHeight: '1.5'
+    },
+    '@media (max-width:450px)': {
+      '& h2': {
+        fontSize: '3rem',
+      },
+      '& p': {
+        fontSize: '1.5rem'
+      }
+    },
+  }
+})
 
 const DisplayInfo = ({ info }) => {
+  const classes = useStyles()
 
   return (
-    <section>
-      {(info.title) ? <h2>Image of {info.title}</h2> : 'Select a date!'}
+    <section className={classes.root}>
+      {(info.title) ? <Typography variant='h2'>Image of {info.title}</Typography> : 'Select a date!'}
       {(info.media_type === 'image') ?
         <img src={info.url} alt={info.title} /> : null
       }
@@ -12,7 +45,7 @@ const DisplayInfo = ({ info }) => {
         <iframe title={info.title} src={info.url}></iframe> : null
       }
       <p>{info.explanation}</p>
-      <p>&#169; Copyright {info.copyright}</p>
+      <footer>&#169; Copyright {info.copyright}</footer>
     </section>
   )
 }
