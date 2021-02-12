@@ -33,12 +33,12 @@ const Index: React.FC<{}> = ({}) => {
 		</Center>;
 	}
 
-	const validateDateSchema = Yup.object().shape({
-		searchDate: Yup.date().min(
-			new Date(),
-			`Date must be be on or before ${new Date()}`
-		),
-	});
+	// const validateDateSchema = Yup.object().shape({
+	// 	searchDate: Yup.date().min(
+	// 		new Date(),
+	// 		`Date must be be on or before ${new Date()}`
+	// 	),
+	// });
 	console.log('testing update');
 	return (
 		<>
@@ -52,7 +52,7 @@ const Index: React.FC<{}> = ({}) => {
 						if (Date.now() === Date.parse(searchDate)) {
 							setSearchDate(searchDate);
 						}
-						await validateYupSchema(validateDateSchema, searchDate);
+						// await validateYupSchema(validateDateSchema, searchDate);
 					}}>
 					{({ isSubmitting }) => (
 						<Form>
