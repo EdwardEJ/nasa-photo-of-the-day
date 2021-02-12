@@ -1,58 +1,29 @@
 import React from 'react';
+import { Box, Center } from '@chakra-ui/react';
 
-// const useStyles = makeStyles({
-//   root: {
-//     padding: '3%',
-//     textAlign: 'center',
-//     height: '100%',
-//     '& h2': {
-//       textAlign: 'center',
-//     },
-//     '& img': {
-//       padding: '3%',
-//     },
-//     '& iframe': {
-//       width: '960px',
-//       height: '540px',
-//     },
-//     '& p': {
-//       fontSize: '2rem',
-//       lineHeight: '1.5'
-//     },
-//     '@media (max-width:450px)': {
-//       '& h2': {
-//         fontSize: '3rem',
-//       },
-//       '& p': {
-//         fontSize: '1.5rem'
-//       }
-//     },
-//   }
-// })
+export interface DisplayInfoProps {
+	title?: string;
+	explanation?: string;
+	media_type?: string;
+	url?: string;
+}
 
-const DisplayInfo: React.FC<{}> = (
-	{
-		// info
-	}
-) => {
+export const DisplayInfo: React.FC<DisplayInfoProps> = ({
+	title,
+	media_type,
+	url,
+	explanation,
+}) => {
 	return (
-		<></>
-		// <section className={classes.root}>
-		// 	{info.title ? (
-		// 		<Typography variant='h2'>Image of {info.title}</Typography>
-		// 	) : (
-		// 		'Select a date!'
-		// 	)}
-		// 	{info.media_type === 'image' ? (
-		// 		<img src={info.url} alt={info.title} />
-		// 	) : null}
-		// 	{info.media_type === 'video' ? (
-		// 		<iframe title={info.title} src={info.url}></iframe>
-		// 	) : null}
-		// 	<p>{info.explanation}</p>
-		// 	<footer>&#169; Copyright {info.copyright}</footer>
-		// </section>
+		<Box maxW={800} m='auto'>
+			<p>{title}</p>
+			<Center>
+				{media_type === 'image' ? <img src={url} alt={title} /> : null}
+			</Center>
+			{media_type === 'video' ? (
+				<iframe title={title} src={url}></iframe>
+			) : null}
+			<p>{explanation}</p>
+		</Box>
 	);
 };
-
-export default DisplayInfo;
