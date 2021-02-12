@@ -39,7 +39,7 @@ const Index: React.FC<{}> = ({}) => {
 			`Date must be be on or before ${new Date()}`
 		),
 	});
-
+	console.log('testing update');
 	return (
 		<>
 			<Box maxW={800} m='auto'>
