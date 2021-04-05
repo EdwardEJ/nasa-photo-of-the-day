@@ -1,7 +1,13 @@
-import { Box, Button, Center, Heading } from '@chakra-ui/react';
+import {
+	Box,
+	Button,
+	Center,
+	FormErrorMessage,
+	Heading,
+} from '@chakra-ui/react';
 import { cleanup } from '@testing-library/react';
 import Axios from 'axios';
-import { Form, Formik, validateYupSchema } from 'formik';
+import { ErrorMessage, Form, Formik, validateYupSchema } from 'formik';
 import React, { useEffect, useState } from 'react';
 import * as Yup from 'yup';
 import { DisplayInfo, DisplayInfoProps } from '../components/DisplayInfo';
@@ -27,19 +33,6 @@ const Index: React.FC<{}> = ({}) => {
 		};
 	}, [url]);
 
-	if (!info) {
-		<Center>
-			<p>Looks like there isn't any information for this date</p>
-		</Center>;
-	}
-
-	const validateDateSchema = Yup.object().shape({
-		searchDate: Yup.date().min(
-			new Date(),
-			`Date must be be on or before ${new Date()}`
-		),
-	});
-
 	return (
 		<>
 			<Box maxW={800} m='auto'>
@@ -48,11 +41,25 @@ const Index: React.FC<{}> = ({}) => {
 					initialValues={{ searchDate: '' }}
 					onSubmit={async (values, { setErrors }) => {
 						const { searchDate } = values;
+						let todayMidnight = new Date();
+						todayMidnight.setUTCHours(24, 0, 0, 0);
 
-						if (Date.now() === Date.parse(searchDate)) {
+						let searchDateMidnight = new Date(searchDate);
+						if (searchDateMidnight >= todayMidnight) {
+							console.log(
+								'Search date is further ahead than today midnight GMT'
+							);
+							console.log(
+								'SET ERRORS: ',
+								setErrors,
+								'FORM ERROR MESSAGE: ',
+								FormErrorMessage,
+								'ERROR MESSAGE: ',
+								ErrorMessage
+							);
+						} else {
 							setSearchDate(searchDate);
 						}
-						await validateYupSchema(validateDateSchema, searchDate);
 					}}>
 					{({ isSubmitting }) => (
 						<Form>
