@@ -1,45 +1,23 @@
-import { Box, Button, Center, Heading } from '@chakra-ui/react';
-import { cleanup } from '@testing-library/react';
-import Axios from 'axios';
-import { Form, Formik, validateYupSchema } from 'formik';
-import React, { useEffect, useState } from 'react';
-import * as Yup from 'yup';
+import {
+	Box,
+	Button,
+	Center,
+	FormErrorMessage,
+	Heading,
+} from '@chakra-ui/react';
+import { ErrorMessage, Form, Formik } from 'formik';
+import React from 'react';
 import { DisplayInfo, DisplayInfoProps } from '../components/DisplayInfo';
 import { InputDateField } from '../components/InputDateField';
 import { API_KEY, BASE_URL } from '../constants';
+import { InferGetStaticPropsType, GetStaticProps } from 'next';
 
-const Index: React.FC<{}> = ({}) => {
-	const [searchDate, setSearchDate] = useState<string>();
-	const [info, setInfo] = useState<DisplayInfoProps>();
 
-	const url = searchDate
-		? `${BASE_URL}?api_key=${API_KEY}&date=${searchDate}`
-		: `${BASE_URL}?api_key=${API_KEY}`;
+const Index = ({ data }: InferGetStaticPropsType<typeof getStaticProps>) => {
+	// const [searchDate, setSearchDate] = useState<string>();
+	// const [info, setInfo] = useState<DisplayInfoProps>();
+	// const router = useRouter();
 
-	useEffect(() => {
-		const fetchData = async () => {
-			const response = await Axios.get(url);
-			setInfo(response.data);
-		};
-		fetchData();
-		return () => {
-			cleanup;
-		};
-	}, [url]);
-
-	if (!info) {
-		<Center>
-			<p>Looks like there isn't any information for this date</p>
-		</Center>;
-	}
-
-	// const validateDateSchema = Yup.object().shape({
-	// 	searchDate: Yup.date().min(
-	// 		new Date(),
-	// 		`Date must be be on or before ${new Date()}`
-	// 	),
-	// });
-	console.log('testing update');
 	return (
 		<>
 			<Box maxW={800} m='auto'>
@@ -49,8 +27,25 @@ const Index: React.FC<{}> = ({}) => {
 					onSubmit={async (values, { setErrors }) => {
 						const { searchDate } = values;
 
-						if (Date.now() === Date.parse(searchDate)) {
-							setSearchDate(searchDate);
+						let todayMidnight = new Date();
+						todayMidnight.setUTCHours(24, 0, 0, 0);
+
+						let searchDateMidnight = new Date(searchDate);
+
+						if (searchDateMidnight >= todayMidnight) {
+							console.log(
+								'Search date is further ahead than today midnight GMT'
+							);
+							console.log(
+								'SET ERRORS: ',
+								setErrors,
+								'FORM ERROR MESSAGE: ',
+								FormErrorMessage,
+								'ERROR MESSAGE: ',
+								ErrorMessage
+							);
+						} else {
+							// setSearchDate(searchDate);
 						}
 						// await validateYupSchema(validateDateSchema, searchDate);
 					}}>
@@ -77,9 +72,32 @@ const Index: React.FC<{}> = ({}) => {
 				</Formik>
 			</Box>
 
-			<DisplayInfo {...info} />
+			<DisplayInfo {...data} />
 		</>
 	);
+};
+
+export const getStaticProps: GetStaticProps = async (ctx) => {
+	console.log('CTX', ctx);
+	const url =
+		// searchDate
+		// ? `${BASE_URL}?api_key=${API_KEY}&date=${searchDate}`
+		// :
+		`${BASE_URL}?api_key=${API_KEY}`;
+
+	const response = await fetch(url);
+	const data: DisplayInfoProps = await response.json();
+
+	if (!data) {
+		return {
+			notFound: true,
+		};
+	}
+	return {
+		props: {
+			data,
+		},
+	};
 };
 
 export default Index;
