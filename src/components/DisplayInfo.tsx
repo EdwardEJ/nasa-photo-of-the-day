@@ -16,13 +16,15 @@ export const DisplayInfo: React.FC<DisplayInfoProps> = ({
 }) => {
 	return (
 		<Box maxW={800} m='auto'>
-			<p>{title}</p>
+			<Center>
+				<p>{title}</p>
+			</Center>
 			<Center>
 				{media_type === 'image' ? <img src={url} alt={title} /> : null}
+				{media_type === 'video' ? (
+					<iframe title={title} src={url}></iframe>
+				) : null}
 			</Center>
-			{media_type === 'video' ? (
-				<iframe title={title} src={url}></iframe>
-			) : null}
 			<p>{explanation}</p>
 		</Box>
 	);

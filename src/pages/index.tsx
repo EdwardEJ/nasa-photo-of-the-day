@@ -5,33 +5,18 @@ import {
 	FormErrorMessage,
 	Heading,
 } from '@chakra-ui/react';
-import { cleanup } from '@testing-library/react';
-import Axios from 'axios';
-import { ErrorMessage, Form, Formik, validateYupSchema } from 'formik';
-import React, { useEffect, useState } from 'react';
-import * as Yup from 'yup';
+import { ErrorMessage, Form, Formik } from 'formik';
+import React from 'react';
 import { DisplayInfo, DisplayInfoProps } from '../components/DisplayInfo';
 import { InputDateField } from '../components/InputDateField';
 import { API_KEY, BASE_URL } from '../constants';
+import { InferGetStaticPropsType, GetStaticProps } from 'next';
 
-const Index: React.FC<{}> = ({}) => {
-	const [searchDate, setSearchDate] = useState<string>();
-	const [info, setInfo] = useState<DisplayInfoProps>();
 
-	const url = searchDate
-		? `${BASE_URL}?api_key=${API_KEY}&date=${searchDate}`
-		: `${BASE_URL}?api_key=${API_KEY}`;
-
-	useEffect(() => {
-		const fetchData = async () => {
-			const response = await Axios.get(url);
-			setInfo(response.data);
-		};
-		fetchData();
-		return () => {
-			cleanup;
-		};
-	}, [url]);
+const Index = ({ data }: InferGetStaticPropsType<typeof getStaticProps>) => {
+	// const [searchDate, setSearchDate] = useState<string>();
+	// const [info, setInfo] = useState<DisplayInfoProps>();
+	// const router = useRouter();
 
 	return (
 		<>
@@ -41,10 +26,12 @@ const Index: React.FC<{}> = ({}) => {
 					initialValues={{ searchDate: '' }}
 					onSubmit={async (values, { setErrors }) => {
 						const { searchDate } = values;
+
 						let todayMidnight = new Date();
 						todayMidnight.setUTCHours(24, 0, 0, 0);
 
 						let searchDateMidnight = new Date(searchDate);
+
 						if (searchDateMidnight >= todayMidnight) {
 							console.log(
 								'Search date is further ahead than today midnight GMT'
@@ -58,7 +45,7 @@ const Index: React.FC<{}> = ({}) => {
 								ErrorMessage
 							);
 						} else {
-							setSearchDate(searchDate);
+							// setSearchDate(searchDate);
 						}
 					}}>
 					{({ isSubmitting }) => (
@@ -84,9 +71,32 @@ const Index: React.FC<{}> = ({}) => {
 				</Formik>
 			</Box>
 
-			<DisplayInfo {...info} />
+			<DisplayInfo {...data} />
 		</>
 	);
+};
+
+export const getStaticProps: GetStaticProps = async (ctx) => {
+	console.log('CTX', ctx);
+	const url =
+		// searchDate
+		// ? `${BASE_URL}?api_key=${API_KEY}&date=${searchDate}`
+		// :
+		`${BASE_URL}?api_key=${API_KEY}`;
+
+	const response = await fetch(url);
+	const data: DisplayInfoProps = await response.json();
+
+	if (!data) {
+		return {
+			notFound: true,
+		};
+	}
+	return {
+		props: {
+			data,
+		},
+	};
 };
 
 export default Index;
