@@ -6,24 +6,45 @@ import {
 	Heading,
 } from '@chakra-ui/react';
 import { ErrorMessage, Form, Formik } from 'formik';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { DisplayInfo, DisplayInfoProps } from '../components/DisplayInfo';
 import { InputDateField } from '../components/InputDateField';
 import { API_KEY, BASE_URL } from '../constants';
-import { InferGetStaticPropsType, GetStaticProps } from 'next';
 
-
-const Index = ({ data }: InferGetStaticPropsType<typeof getStaticProps>) => {
-	// const [searchDate, setSearchDate] = useState<string>();
-	// const [info, setInfo] = useState<DisplayInfoProps>();
-	// const router = useRouter();
-
-	return (
+const Index = () => {
+	  const [data, setData] = useState<DisplayInfoProps>()
+	  const [loading, setLoading] = useState(true)
+	  const [searchDate, setSearchDate] = useState('')
+	  const [error, setError] = useState(undefined)
+	
+	const url =
+		searchDate
+		?
+		`${BASE_URL}?api_key=${API_KEY}&date=${searchDate}`
+		:
+		`${BASE_URL}?api_key=${API_KEY}`;
+	
+	useEffect(() => {
+    const fetchData = async () => {
+			try {
+				const response = await fetch(url);
+				const data = await response.json();
+        setData(data)
+       } catch (err) {
+        //  setError(err)
+       } finally {
+         setLoading(false)
+       }
+    }
+    fetchData()
+	}, [url])
+	
+	return loading ? <h2>Loading... </h2> : (
 		<>
 			<Box maxW={800} m='auto'>
-				<Heading textAlign='center'>Astronomy Picture of the Day</Heading>
+				<Heading textAlign='center'>Title</Heading>
 				<Formik
-					initialValues={{ searchDate: '' }}
+					initialValues={{ searchDate: searchDate }}
 					onSubmit={async (values, { setErrors }) => {
 						const { searchDate } = values;
 
@@ -45,7 +66,7 @@ const Index = ({ data }: InferGetStaticPropsType<typeof getStaticProps>) => {
 								ErrorMessage
 							);
 						} else {
-							// setSearchDate(searchDate);
+							setSearchDate(searchDate);
 						}
 					}}>
 					{({ isSubmitting }) => (
@@ -74,29 +95,6 @@ const Index = ({ data }: InferGetStaticPropsType<typeof getStaticProps>) => {
 			<DisplayInfo {...data} />
 		</>
 	);
-};
-
-export const getStaticProps: GetStaticProps = async (ctx) => {
-	console.log('CTX', ctx);
-	const url =
-		// searchDate
-		// ? `${BASE_URL}?api_key=${API_KEY}&date=${searchDate}`
-		// :
-		`${BASE_URL}?api_key=${API_KEY}`;
-
-	const response = await fetch(url);
-	const data: DisplayInfoProps = await response.json();
-
-	if (!data) {
-		return {
-			notFound: true,
-		};
-	}
-	return {
-		props: {
-			data,
-		},
-	};
 };
 
 export default Index;
